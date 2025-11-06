@@ -43,9 +43,41 @@
 
 @layer components {
 
-  /* Table of Contents Styles */
-  .toc-inline {
-    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5 mb-10;
+  /* Post Layout - TOC + Content Side by Side */
+  .post-layout-wrapper {
+    @apply relative flex flex-col lg:flex-row gap-4 lg:gap-6;
+  }
+
+  /* Table of Contents Sidebar */
+  .toc-sidebar {
+    @apply w-full lg:w-64 shrink-0 order-2 lg:order-1;
+  }
+
+  .toc-sticky {
+    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5;
+    /* Sticky positioning on desktop */
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .toc-sticky::-webkit-scrollbar {
+    width: 4px;
+  }
+
+  .toc-sticky::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .toc-sticky::-webkit-scrollbar-thumb {
+    background: #374151;
+    border-radius: 2px;
+  }
+
+  .toc-sticky::-webkit-scrollbar-thumb:hover {
+    background: #4b5563;
   }
 
   .toc-header {
@@ -106,6 +138,23 @@
   .toc-h3 .toc-link.active {
     @apply font-bold;
     color: var(--color-primary-400);
+  }
+
+  /* Main Content Area */
+  .post-content-area {
+    @apply flex-1 min-w-0 order-1 lg:order-2;
+  }
+
+  /* On mobile, show TOC at bottom */
+  @media (max-width: 1023px) {
+    .toc-sidebar {
+      @apply mt-8;
+    }
+
+    .toc-sticky {
+      position: static;
+      max-height: none;
+    }
   }
 
   /* Article Content Styles */
