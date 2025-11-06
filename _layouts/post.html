@@ -2,7 +2,8 @@
 layout: default
 ---
 
-<article class="max-w-5xl mx-auto">
+<div class="max-w-7xl mx-auto px-2 sm:px-3 lg:px-4 py-12">
+  <!-- Post Header (full width) -->
   <header class="mb-8">
     <h1 class="text-5xl font-bold mb-4 text-dark-text">{{ page.title }}</h1>
     <div class="text-gray-500 text-sm mb-8">
@@ -11,38 +12,44 @@ layout: default
     </div>
   </header>
 
-  <!-- Table of Contents -->
-  {% if page.toc %}
-  <nav class="toc-inline mb-12">
-    <div class="toc-header"><span class="toc-emoji">🚀</span> Table of Contents</div>
-    <ol class="toc-list">
-      {% assign section_num = 0 %}
-      {% for item in page.toc %}
-        {% assign section_num = section_num | plus: 1 %}
-        <li class="toc-item toc-h2">
-          <a href="#{{ item.id }}" class="toc-link" data-target="{{ item.id }}">
-            <span class="toc-number">{{ section_num }}.</span> {{ item.title }}
-          </a>
-          {% if item.subsections %}
-          <ul class="toc-sublist">
-            {% for subsection in item.subsections %}
-            <li class="toc-item toc-h3">
-              <a href="#{{ subsection.id }}" class="toc-link" data-target="{{ subsection.id }}">
-                <span class="toc-bullet">•</span> {{ subsection.title }}
+  <!-- Layout: TOC (left) + Content (right) -->
+  <div class="post-layout-wrapper">
+    <!-- Table of Contents - Left Sidebar -->
+    {% if page.toc %}
+    <aside class="toc-sidebar">
+      <nav class="toc-sticky">
+        <div class="toc-header"><span class="toc-emoji">🚀</span> Table of Contents</div>
+        <ol class="toc-list">
+          {% assign section_num = 0 %}
+          {% for item in page.toc %}
+            {% assign section_num = section_num | plus: 1 %}
+            <li class="toc-item toc-h2">
+              <a href="#{{ item.id }}" class="toc-link" data-target="{{ item.id }}">
+                <span class="toc-number">{{ section_num }}.</span> {{ item.title }}
               </a>
+              {% if item.subsections %}
+              <ul class="toc-sublist">
+                {% for subsection in item.subsections %}
+                <li class="toc-item toc-h3">
+                  <a href="#{{ subsection.id }}" class="toc-link" data-target="{{ subsection.id }}">
+                    <span class="toc-bullet">•</span> {{ subsection.title }}
+                  </a>
+                </li>
+                {% endfor %}
+              </ul>
+              {% endif %}
             </li>
-            {% endfor %}
-          </ul>
-          {% endif %}
-        </li>
-      {% endfor %}
-    </ol>
-  </nav>
-  {% endif %}
+          {% endfor %}
+        </ol>
+      </nav>
+    </aside>
+    {% endif %}
 
-  <div class="article-content">
-    {{ content }}
-  </div>
+    <!-- Main Content Area -->
+    <article class="post-content-area">
+      <div class="article-content">
+        {{ content }}
+      </div>
 
   <!-- Metadata Section -->
   <div class="metadata-box mt-12">
@@ -65,34 +72,36 @@ layout: default
     {% endif %}
   </div>
 
-  <!-- Share Buttons -->
-  {% include share-buttons.html type="article" %}
+      <!-- Share Buttons -->
+      {% include share-buttons.html type="article" %}
 
-  <footer class="mt-16 pt-8 border-t border-gray-800">
-    <div class="flex justify-between">
-      {% if page.previous.url %}
-      <a href="{{ page.previous.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
-        ← {{ page.previous.title }}
-      </a>
-      {% endif %}
-      {% if page.next.url %}
-      <a href="{{ page.next.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
-        {{ page.next.title }} →
-      </a>
-      {% endif %}
-    </div>
-  </footer>
-</article>
+      <footer class="mt-16 pt-8 border-t border-gray-800">
+        <div class="flex justify-between">
+          {% if page.previous.url %}
+          <a href="{{ page.previous.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
+            ← {{ page.previous.title }}
+          </a>
+          {% endif %}
+          {% if page.next.url %}
+          <a href="{{ page.next.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
+            {{ page.next.title }} →
+          </a>
+          {% endif %}
+        </div>
+      </footer>
+    </article>
+  </div>
+</div>
 
 <script>
 // ============================================
-// Table of Contents Active State
+// Table of Contents Active State with Scroll Spy
 // ============================================
 (function() {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function() {
-    const toc = document.querySelector('.toc-inline');
+    const toc = document.querySelector('.toc-sticky');
     if (!toc) return;
 
     const tocLinks = toc.querySelectorAll('.toc-link');
@@ -100,62 +109,78 @@ layout: default
 
     if (tocLinks.length === 0 || allHeadings.length === 0) return;
 
+    // Create a map of heading IDs to TOC links for quick lookup
+    const linkMap = new Map();
+    tocLinks.forEach(link => {
+      linkMap.set(link.dataset.target, link);
+    });
+
     let isManualClick = false;
     let manualClickTimeout;
+    let activeHeadingId = null;
+
+    /**
+     * Set active state for a specific heading ID
+     */
+    function setActiveLink(headingId) {
+      if (!headingId) return;
+
+      // Only update if it's a different heading
+      if (activeHeadingId === headingId) return;
+
+      activeHeadingId = headingId;
+
+      // Remove all active states
+      tocLinks.forEach(link => link.classList.remove('active'));
+
+      // Add active state to the matching link
+      const activeLink = linkMap.get(headingId);
+      if (activeLink) {
+        activeLink.classList.add('active');
+      }
+    }
 
     /**
      * Update active TOC link based on scroll position
      */
     function updateActiveToc() {
-      if (isManualClick) return; // Don't update during manual navigation
+      if (isManualClick) return;
 
-      // Find the heading that's currently most visible
+      const scrollPosition = window.scrollY + 200; // Add offset to scroll position
+
+      // Find the last heading we've scrolled past
       let currentHeading = null;
-      let minDistance = Infinity;
 
-      allHeadings.forEach(heading => {
-        const rect = heading.getBoundingClientRect();
-        const distance = Math.abs(rect.top - 100);
+      // Go through all headings and find the last one we've passed
+      for (let i = 0; i < allHeadings.length; i++) {
+        const heading = allHeadings[i];
+        const headingTop = heading.offsetTop;
 
-        // Prioritize headings in the upper half of viewport
-        if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
-          if (distance < minDistance) {
-            minDistance = distance;
-            currentHeading = heading;
-          }
-        }
-      });
-
-      // Fallback: if no heading in upper half, use the last one above viewport
-      if (!currentHeading) {
-        for (let i = allHeadings.length - 1; i >= 0; i--) {
-          const rect = allHeadings[i].getBoundingClientRect();
-          if (rect.top < window.innerHeight / 2) {
-            currentHeading = allHeadings[i];
-            break;
-          }
+        // If this heading is above our current scroll position, it's a candidate
+        if (headingTop <= scrollPosition) {
+          currentHeading = heading;
+        } else {
+          // We've found a heading below us, stop checking
+          break;
         }
       }
 
-      // Update active state
-      if (currentHeading) {
-        const id = currentHeading.id;
-        tocLinks.forEach(link => {
-          if (link.dataset.target === id) {
-            tocLinks.forEach(l => l.classList.remove('active'));
-            link.classList.add('active');
-          }
-        });
+      // If we found a heading, activate it
+      // This ensures the last heading stays active even when scrolling past it
+      if (currentHeading && currentHeading.id) {
+        setActiveLink(currentHeading.id);
       }
     }
 
     /**
-     * Throttle function for scroll events
+     * Throttled scroll handler
      */
     let scrollTimeout;
     function handleScroll() {
-      clearTimeout(scrollTimeout);
-      scrollTimeout = setTimeout(updateActiveToc, 50);
+      if (scrollTimeout) {
+        window.cancelAnimationFrame(scrollTimeout);
+      }
+      scrollTimeout = window.requestAnimationFrame(updateActiveToc);
     }
 
     // Listen for scroll events
@@ -170,36 +195,56 @@ layout: default
         isManualClick = true;
         clearTimeout(manualClickTimeout);
 
+        const targetId = link.dataset.target;
+
         // Immediately set active state
-        tocLinks.forEach(l => l.classList.remove('active'));
-        link.classList.add('active');
+        setActiveLink(targetId);
 
         // Scroll to target
-        const targetId = link.getAttribute('href').substring(1);
         const targetElement = document.getElementById(targetId);
         if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          const headerOffset = 100;
+          const elementPosition = targetElement.offsetTop;
+          const offsetPosition = elementPosition - headerOffset;
+
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+
+          // Update URL hash
           history.pushState(null, null, '#' + targetId);
         }
 
         // Re-enable auto-update after scroll animation completes
         manualClickTimeout = setTimeout(() => {
           isManualClick = false;
+          updateActiveToc();
         }, 1000);
       });
     });
 
-    // Initial update
+    // Initial update on page load
     updateActiveToc();
 
-    // Update on page load if there's a hash in URL
+    // Handle direct navigation with hash
     if (window.location.hash) {
       const hash = window.location.hash.substring(1);
-      tocLinks.forEach(link => {
-        if (link.dataset.target === hash) {
-          link.classList.add('active');
+      setActiveLink(hash);
+
+      // Scroll to the element after a short delay
+      setTimeout(() => {
+        const element = document.getElementById(hash);
+        if (element) {
+          const headerOffset = 100;
+          const elementPosition = element.offsetTop;
+          const offsetPosition = elementPosition - headerOffset;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
         }
-      });
+      }, 100);
     }
   });
 })();
