@@ -128,16 +128,27 @@ permalink: /articles/:year/:title/
 
 ### Favicon
 
+**Option 1: Use an Emoji (Easiest!)**
+
+Edit `_config.yml`:
+```yaml
+icon: 🚀  # Any emoji!
+```
+
+No files needed! Just pick an emoji and it works. ✨
+
+**Option 2: Use Custom Images**
+
 1. Generate at [favicon.io](https://favicon.io/)
-2. Add files to `assets/images/`:
+2. Remove or comment out `icon:` in `_config.yml`
+3. Add files to `assets/images/`:
    - `favicon.ico`
    - `favicon-16x16.png`
    - `favicon-32x32.png`
    - `apple-touch-icon.png`
    - `android-chrome-192x192.png`
    - `android-chrome-512x512.png`
-3. Update `site.webmanifest` with your blog name
-4. Done! (Already configured in template)
+4. Update `site.webmanifest` with your blog name
 
 ### Google Analytics
 

@@ -1,38 +1,40 @@
-# Welcome to Jekyll!
-#
-# This config file is meant for settings that affect your whole blog, values
-# which you are expected to set up once and rarely edit after that. If you find
-# yourself editing this file very often, consider using Jekyll's data files
-# feature for the data you need to update frequently.
-#
-# For technical reasons, this file is *NOT* reloaded automatically when you use
-# 'bundle exec jekyll serve'. If you change this file, please restart the server process.
-#
-# If you need help with YAML syntax, here are some quick references for you:
-# https://learn-the-web.algonquindesign.ca/topics/markdown-yaml-cheat-sheet/#yaml
-# https://learnxinyminutes.com/docs/yaml/
-#
+# -----------------------------------------------------------------------------
 # Site settings
-# These are used to personalize your new site. If you look in the HTML files,
-# you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
-# You can create any custom variable you would like, and they will be accessible
-# in the templates via {{ site.myvariable }}.
+# -----------------------------------------------------------------------------
 
-
-email: your-email@example.com
 title: Your Name
+first_name: Your
+last_name: Name
 greeting: "Hi, I'm Your Name!"
 tagline: "Just a programmer"
-direction: "ltr"
-lang: "en"
-description: >- # this means to ignore newlines until "baseurl:"
+email: your-email@example.com
+
+description: >- # the ">" symbol means to ignore newlines
   Personal blog - A programmer sharing thoughts on software development,
   Python, and web technologies.
-baseurl: "" # the subpath of your site, e.g. /blog
-url: "https://yourusername.github.io" # the base hostname & protocol for your site
 
+footer_text: >
+  Powered by <a href="https://jekyllrb.com/" target="_blank">Jekyll</a> with <a href="https://tailwindcss.com/" target="_blank">Tailwind CSS</a>.
+  Hosted by <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
 
-# Social Media (with Font Awesome icons)
+lang: en # the language of your site (for example: en, fr, cn, ru, etc.)
+icon: ⚛️  # the emoji used as the favicon (alternatively, provide image name in /assets/img/)
+
+url: "https://alihtt.github.io" # the base hostname & protocol for your site
+baseurl: "/al-minimal" # the subpath of your site, e.g. /blog/. Leave blank for root
+
+# -----------------------------------------------------------------------------
+# About
+# -----------------------------------------------------------------------------
+
+about: >-
+  I'm a programmer passionate about Python & Django.
+  I build efficient web applications and share my knowledge through this blog.
+
+# -----------------------------------------------------------------------------
+# Social Media
+# -----------------------------------------------------------------------------
+
 social:
   - icon: fa-brands fa-github
     link: https://github.com/yourusername
@@ -50,7 +52,10 @@ social:
     link: mailto:your.email@example.com
     name: Email
 
+# -----------------------------------------------------------------------------
 # Navigation
+# -----------------------------------------------------------------------------
+
 navigation:
   - title: Articles
     url: /articles
@@ -61,9 +66,16 @@ navigation:
   - title: About
     url: /about
 
-# Analytics & Tracking
-google_analytics: # UA-XXXXXXXX-Y or G-XXXXXXXXXX (add your tracking ID)
-# disqus_shortname: your-disqus-shortname # Uncomment to enable comments
+# -----------------------------------------------------------------------------
+# Analytics and search engine verification
+# -----------------------------------------------------------------------------
+
+google_analytics: # your Google Analytics measurement ID (format: G-XXXXXXXXXX)
+# disqus_shortname: # your disqus shortname (uncomment to enable comments)
+
+# -----------------------------------------------------------------------------
+# Blog
+# -----------------------------------------------------------------------------
 
 # Pagination
 pagination:
@@ -78,7 +90,10 @@ pagination:
 # Permalinks (clean URLs without .html)
 permalink: /articles/:title/
 
-# Collections (for Projects, Portfolio, etc.)
+# -----------------------------------------------------------------------------
+# Collections
+# -----------------------------------------------------------------------------
+
 collections:
   projects:
     output: true
@@ -91,29 +106,21 @@ defaults:
     values:
       layout: "project"
 
+# -----------------------------------------------------------------------------
+# Jekyll settings
+# -----------------------------------------------------------------------------
+
+# Markdown and syntax highlight
 markdown: kramdown
+
+# Build settings
 plugins:
   - jekyll-feed
   - jekyll-paginate-v2
   - jekyll-sitemap
   - jekyll-seo-tag
 
-# Performance - HTML Compression
-compress_html:
-  clippings: all
-  comments: ["<!-- ", " -->"]
-  endings: all
-  ignore:
-    envs: ['development']
-
-# Exclude from processing.
-# The following items will not be processed, by default.
-# Any item listed under the `exclude:` key here will be automatically added to
-# the internal "default list".
-#
-# Excluded items can be processed by explicitly listing the directories or
-# their entries' file path in the `include:` list.
-#
+# Includes & excludes
 exclude:
   - docs/
   - node_modules/
@@ -125,3 +132,12 @@ exclude:
   - README.md
   - CONTRIBUTING.md
   - LICENSE
+  - .gitignore
+
+# Performance - HTML Compression
+compress_html:
+  clippings: all
+  comments: ["<!-- ", " -->"]
+  endings: all
+  ignore:
+    envs: ['development']

@@ -57,10 +57,19 @@ Visit `http://localhost:4000` 🎉
 Edit `_config.yml`:
 
 ```yaml
-title: Your Name
-greeting: "Hi, I'm Your Name!"
-url: "https://yourusername.github.io"
+# -----------------------------------------------------------------------------
+# Site settings
+# -----------------------------------------------------------------------------
 
+title: Your Name
+first_name: Your
+last_name: Name
+greeting: "Hi, I'm Your Name!"
+email: your-email@example.com
+url: "https://yourusername.github.io"
+icon: ⚛️  # emoji used as favicon
+
+# Social Media
 social:
   - icon: fa-brands fa-github
     link: https://github.com/yourusername
@@ -68,7 +77,7 @@ social:
   # Add more...
 ```
 
-**For more customization:** See [CUSTOMIZING.md](docs/CUSTOMIZING.md)
+Configuration is organized into clear sections with comments. **For more:** See [CUSTOMIZING.md](docs/CUSTOMIZING.md)
 
 ## 📝 Writing Your First Post
 
