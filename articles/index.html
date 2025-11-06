@@ -10,8 +10,8 @@ pagination:
 
   <div class="space-y-6">
     {% for post in paginator.posts %}
-    <article class="border-b border-gray-800 pb-6">
-      <time class="text-gray-500 text-sm" datetime="{{ post.date | date_to_xmlschema }}">
+    <article class="article-item pb-6">
+      <time class="article-date" datetime="{{ post.date | date_to_xmlschema }}">
         {{ post.date | date: "%Y-%m-%d" }}
       </time>
       <h2 class="text-2xl font-semibold mt-2 mb-2">
@@ -20,12 +20,12 @@ pagination:
         </a>
       </h2>
       {% if post.excerpt %}
-      <p class="text-gray-400">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+      <p class="article-excerpt">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
       {% endif %}
       {% if post.tags and post.tags.size > 0 %}
       <div class="flex flex-wrap gap-2 mt-3">
         {% for tag in post.tags limit:3 %}
-        <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs">#{{ tag }}</span>
+        <span class="article-tag">#{{ tag }}</span>
         {% endfor %}
       </div>
       {% endif %}
@@ -37,11 +37,11 @@ pagination:
   {% if paginator.total_pages > 1 %}
   <div class="flex justify-center items-center gap-4 mt-12">
     {% if paginator.previous_page %}
-    <a href="{{ paginator.previous_page_path | relative_url }}" class="px-4 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="pagination-btn">
       ← Previous
     </a>
     {% else %}
-    <span class="px-4 py-2 bg-gray-900 text-gray-600 rounded cursor-not-allowed">
+    <span class="pagination-btn-disabled">
       ← Previous
     </span>
     {% endif %}
@@ -49,15 +49,15 @@ pagination:
     <div class="flex items-center gap-2">
       {% for page in (1..paginator.total_pages) %}
         {% if page == paginator.page %}
-          <span class="px-3 py-2 bg-primary-600 text-white rounded font-bold">
+          <span class="pagination-page-active">
             {{ page }}
           </span>
         {% elsif page == 1 %}
-          <a href="{{ '/articles/' | relative_url }}" class="px-3 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+          <a href="{{ '/articles/' | relative_url }}" class="pagination-page">
             {{ page }}
           </a>
         {% else %}
-          <a href="{{ '/articles/page/' | append: page | append: '/' | relative_url }}" class="px-3 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+          <a href="{{ '/articles/page/' | append: page | append: '/' | relative_url }}" class="pagination-page">
             {{ page }}
           </a>
         {% endif %}
@@ -65,17 +65,17 @@ pagination:
     </div>
 
     {% if paginator.next_page %}
-    <a href="{{ paginator.next_page_path | relative_url }}" class="px-4 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+    <a href="{{ paginator.next_page_path | relative_url }}" class="pagination-btn">
       Next →
     </a>
     {% else %}
-    <span class="px-4 py-2 bg-gray-900 text-gray-600 rounded cursor-not-allowed">
+    <span class="pagination-btn-disabled">
       Next →
     </span>
     {% endif %}
   </div>
 
-  <p class="text-center text-gray-500 text-sm mt-4">
+  <p class="pagination-info">
     Page {{ paginator.page }} of {{ paginator.total_pages }}
   </p>
   {% endif %}

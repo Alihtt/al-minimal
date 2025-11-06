@@ -6,6 +6,15 @@
     <meta name="description" content="{{ page.description | default: site.description }}">
     <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
     {% seo %}
+
+    <!-- Theme initialization script (prevent flash) -->
+    <script>
+      (function() {
+        const theme = localStorage.getItem('theme') || 'light';
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
@@ -40,17 +49,17 @@
             {{ content }}
     </main>
 
-    <footer class="max-w-5xl mx-auto px-6 py-8 mt-16 border-t border-gray-800">
-        <div class="text-center text-sm text-gray-500">
+    <footer class="max-w-5xl mx-auto px-6 py-8 mt-16 border-t footer-border">
+        <div class="text-center text-sm footer-text">
             <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. All rights reserved.</p>
         </div>
     </footer>
 
     <!-- Search Modal -->
     <div id="search-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
-        <div class="bg-gray-900 border border-gray-700 rounded-lg max-w-2xl w-full max-h-[80vh] flex flex-col">
+        <div class="search-modal-content rounded-lg max-w-2xl w-full max-h-[80vh] flex flex-col">
             <!-- Search Header -->
-            <div class="p-4 border-b border-gray-800">
+            <div class="p-4 border-b search-modal-border">
                 <div class="flex items-center gap-3">
                     <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
@@ -390,6 +399,72 @@
                 }
             });
 
+        })();
+    </script>
+
+    <script>
+        // ============================================
+        // Theme Toggle Functionality
+        // ============================================
+        (function() {
+            'use strict';
+
+            function updateThemeIcons(theme) {
+                // Desktop icons
+                const sunIcon = document.getElementById('theme-icon-sun');
+                const moonIcon = document.getElementById('theme-icon-moon');
+
+                // Mobile icons
+                const sunIconMobile = document.getElementById('theme-icon-sun-mobile');
+                const moonIconMobile = document.getElementById('theme-icon-moon-mobile');
+                const themeTextMobile = document.getElementById('theme-text-mobile');
+
+                if (theme === 'dark') {
+                    // Show sun icon (to switch to light)
+                    sunIcon?.classList.remove('hidden');
+                    moonIcon?.classList.add('hidden');
+                    sunIconMobile?.classList.remove('hidden');
+                    moonIconMobile?.classList.add('hidden');
+                    if (themeTextMobile) themeTextMobile.textContent = 'LIGHT MODE';
+                } else {
+                    // Show moon icon (to switch to dark)
+                    sunIcon?.classList.add('hidden');
+                    moonIcon?.classList.remove('hidden');
+                    sunIconMobile?.classList.add('hidden');
+                    moonIconMobile?.classList.remove('hidden');
+                    if (themeTextMobile) themeTextMobile.textContent = 'DARK MODE';
+                }
+            }
+
+            function setTheme(theme) {
+                document.documentElement.setAttribute('data-theme', theme);
+                localStorage.setItem('theme', theme);
+                updateThemeIcons(theme);
+            }
+
+            function toggleTheme() {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                setTheme(newTheme);
+            }
+
+            // Initialize on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                updateThemeIcons(savedTheme);
+
+                // Desktop toggle
+                const themeToggle = document.getElementById('theme-toggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', toggleTheme);
+                }
+
+                // Mobile toggle
+                const themeToggleMobile = document.getElementById('theme-toggle-mobile');
+                if (themeToggleMobile) {
+                    themeToggleMobile.addEventListener('click', toggleTheme);
+                }
+            });
         })();
     </script>
 </body>

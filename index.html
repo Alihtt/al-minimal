@@ -5,7 +5,7 @@ layout: default
 <!-- Introduction Section -->
 <div class="py-12">
   <h1 class="text-5xl font-bold mb-4">{{ site.greeting }}</h1>
-  <p class="text-xl text-gray-400 mb-6">{{ site.tagline }}</p>
+  <p class="homepage-tagline mb-6">{{ site.tagline }}</p>
 
   {% include social-icons.html %}
 </div>
@@ -27,8 +27,8 @@ layout: default
     {% endfor %}
   </div>
 
-  <p class="mt-6 text-gray-400">
-    view all projects in <a href="{{ '/projects' | relative_url }}" class="underline hover:text-dark-text transition-colors">the projects page</a>.
+  <p class="mt-6 homepage-link-text">
+    view all projects in <a href="{{ '/projects' | relative_url }}" class="homepage-link">the projects page</a>.
   </p>
 </div>
 {% endif %}
@@ -49,8 +49,8 @@ layout: default
     {% endfor %}
   </div>
 
-  <p class="mt-6 text-gray-400">
-    more articles can be found in <a href="{{ '/articles' | relative_url }}" class="underline hover:text-dark-text transition-colors">the archive</a>.
+  <p class="mt-6 homepage-link-text">
+    more articles can be found in <a href="{{ '/articles' | relative_url }}" class="homepage-link">the archive</a>.
   </p>
 </div>
 

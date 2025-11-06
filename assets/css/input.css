@@ -1,11 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* Custom Colors - Theme Configuration */
-  --color-dark-bg: #1a1a1a;
-  --color-dark-text: #e0e0e0;
-
-  /* Primary theme color - change these to change the entire site theme! */
+  /* Primary theme color - consistent across both modes */
   --color-primary-300: #c084fc;
   /* light purple (hover states) */
   --color-primary-400: #a855f7;
@@ -21,9 +17,51 @@
   --font-sans: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
 }
 
+:root {
+  /* Light Mode Colors (default) */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+  --border-color: #e5e7eb;
+  --border-color-dark: #d1d5db;
+  --card-bg: #ffffff;
+  --card-border: #e5e7eb;
+  --code-bg: #f3f4f6;
+  --code-text: #db2777;
+  --pre-bg: #1a1b26;
+}
+
+[data-theme="dark"] {
+  /* Dark Mode Colors */
+  --bg-primary: #1a1a1a;
+  --bg-secondary: #1f1f1f;
+  --bg-tertiary: #262626;
+  --text-primary: #e0e0e0;
+  --text-secondary: #a3a3a3;
+  --text-tertiary: #737373;
+  --border-color: #404040;
+  --border-color-dark: #525252;
+  --card-bg: #1f1f1f;
+  --card-border: #404040;
+  --code-bg: #262626;
+  --code-text: #ff79c6;
+  --pre-bg: #1a1b26;
+}
+
+@theme {
+  /* Map CSS variables to Tailwind colors */
+  --color-dark-bg: var(--bg-primary);
+  --color-dark-text: var(--text-primary);
+}
+
 @layer base {
   body {
-    @apply bg-dark-bg text-dark-text antialiased font-sans;
+    @apply antialiased font-sans transition-colors duration-200;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
   }
 
   a:hover,
@@ -54,7 +92,9 @@
   }
 
   .toc-sticky {
-    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5;
+    @apply rounded-lg p-5;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
     /* Sticky positioning on desktop */
     position: sticky;
     top: 2rem;
@@ -72,16 +112,17 @@
   }
 
   .toc-sticky::-webkit-scrollbar-thumb {
-    background: #374151;
+    background: var(--border-color-dark);
     border-radius: 2px;
   }
 
   .toc-sticky::-webkit-scrollbar-thumb:hover {
-    background: #4b5563;
+    background: var(--text-tertiary);
   }
 
   .toc-header {
-    @apply text-base font-bold text-dark-text mb-3 flex items-center gap-2;
+    @apply text-base font-bold mb-3 flex items-center gap-2;
+    color: var(--text-primary);
   }
 
   .toc-emoji {
@@ -109,7 +150,6 @@
   }
 
   .toc-link:hover {
-    @apply text-dark-text;
     color: var(--color-primary-300);
   }
 
@@ -120,7 +160,7 @@
 
   .toc-number {
     @apply font-normal mr-1;
-    color: #6b7280;
+    color: var(--text-tertiary);
   }
 
   .toc-link.active .toc-number {
@@ -159,19 +199,23 @@
 
   /* Article Content Styles */
   .article-content {
-    @apply text-gray-300 leading-relaxed text-base;
+    @apply leading-relaxed text-base;
+    color: var(--text-secondary);
   }
 
   .article-content h2 {
-    @apply text-3xl font-bold mt-12 mb-6 text-dark-text scroll-mt-8;
+    @apply text-3xl font-bold mt-12 mb-6 scroll-mt-8;
+    color: var(--text-primary);
   }
 
   .article-content h3 {
-    @apply text-2xl font-bold mt-8 mb-4 text-dark-text scroll-mt-8;
+    @apply text-2xl font-bold mt-8 mb-4 scroll-mt-8;
+    color: var(--text-primary);
   }
 
   .article-content h4 {
-    @apply text-xl font-bold mt-6 mb-3 text-dark-text;
+    @apply text-xl font-bold mt-6 mb-3;
+    color: var(--text-primary);
   }
 
   .article-content p {
@@ -200,7 +244,8 @@
   }
 
   .article-content strong {
-    @apply text-dark-text font-bold;
+    @apply font-bold;
+    color: var(--text-primary);
   }
 
   .article-content em {
@@ -208,13 +253,15 @@
   }
 
   .article-content code {
-    @apply bg-gray-800 px-2 py-0.5 rounded text-sm font-mono;
-    color: #ff79c6;
+    @apply px-2 py-0.5 rounded text-sm font-mono;
+    background-color: var(--code-bg);
+    color: var(--code-text);
   }
 
   .article-content pre {
-    @apply rounded-lg overflow-x-auto mb-6 border border-gray-800;
-    background-color: #1a1b26 !important;
+    @apply rounded-lg overflow-x-auto mb-6;
+    background-color: var(--pre-bg) !important;
+    border: 1px solid var(--border-color);
     padding: 1.25rem;
   }
 
@@ -229,11 +276,15 @@
   }
 
   .article-content blockquote {
-    @apply border-l-4 border-gray-700 pl-6 pr-4 py-2 italic text-gray-400 my-6 bg-gray-900/30;
+    @apply border-l-4 pl-6 pr-4 py-2 italic my-6;
+    border-color: var(--border-color-dark);
+    color: var(--text-tertiary);
+    background-color: var(--bg-secondary);
   }
 
   .article-content hr {
-    @apply border-gray-800 my-8;
+    @apply my-8;
+    border-color: var(--border-color);
   }
 
   /* Separator text */
@@ -243,11 +294,14 @@
 
   /* Metadata Section */
   .metadata-box {
-    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5;
+    @apply rounded-lg p-5;
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
   }
 
   .metadata-title {
-    @apply text-base font-bold text-dark-text mb-4;
+    @apply text-base font-bold mb-4;
+    color: var(--text-primary);
   }
 
   .metadata-row {
@@ -255,11 +309,12 @@
   }
 
   .metadata-label {
-    @apply text-dark-text font-normal min-w-[80px];
+    @apply font-normal min-w-[80px];
+    color: var(--text-primary);
   }
 
   .metadata-value {
-    @apply text-gray-400;
+    color: var(--text-secondary);
   }
 
   .metadata-tags {
@@ -267,20 +322,29 @@
   }
 
   .tag-pill {
-    @apply px-3 py-1 bg-gray-800 text-dark-text rounded-full text-sm no-underline hover:bg-gray-700 transition-colors;
+    @apply px-3 py-1 rounded-full text-sm no-underline transition-colors;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .tag-pill:hover {
+    background-color: var(--border-color-dark);
   }
 
   /* Page Layout Styles */
   .prose {
-    @apply text-gray-300 leading-relaxed;
+    @apply leading-relaxed;
+    color: var(--text-secondary);
   }
 
   .prose h2 {
-    @apply text-2xl font-bold mt-8 mb-4 text-dark-text;
+    @apply text-2xl font-bold mt-8 mb-4;
+    color: var(--text-primary);
   }
 
   .prose h3 {
-    @apply text-xl font-bold mt-6 mb-3 text-dark-text;
+    @apply text-xl font-bold mt-6 mb-3;
+    color: var(--text-primary);
   }
 
   .prose p {
@@ -300,7 +364,174 @@
   }
 
   .prose strong {
-    @apply text-dark-text font-bold;
+    @apply font-bold;
+    color: var(--text-primary);
+  }
+
+  /* Theme Toggle Button */
+  .theme-toggle {
+    @apply relative inline-flex items-center justify-center w-10 h-10 rounded-lg transition-colors;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .theme-toggle:hover {
+    background-color: var(--border-color);
+  }
+
+  .theme-toggle svg {
+    @apply w-5 h-5;
+  }
+
+  /* Header and footer borders */
+  .header-border,
+  .footer-border {
+    border-color: var(--border-color);
+  }
+
+  .footer-text {
+    color: var(--text-tertiary);
+  }
+
+  /* Search modal */
+  .search-modal-content {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+  }
+
+  .search-modal-border {
+    border-color: var(--border-color);
+  }
+
+  /* Tags page */
+  .tag-badge {
+    @apply px-4 py-2 rounded-lg transition-colors no-underline inline-block;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .tag-badge:hover {
+    background-color: var(--border-color-dark);
+  }
+
+  .tag-count {
+    color: var(--text-tertiary);
+  }
+
+  /* Projects page */
+  .project-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--card-border);
+  }
+
+  .project-card:hover {
+    border-color: var(--color-primary-500);
+  }
+
+  .project-list-item {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tech-tag {
+    @apply px-2 py-1 rounded text-xs inline-block;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+  }
+
+  .status-badge {
+    @apply px-2 py-1 text-xs rounded inline-block;
+    background-color: #059669;
+    color: #d1fae5;
+  }
+
+  [data-theme="dark"] .status-badge {
+    background-color: rgba(6, 95, 70, 0.5);
+    color: #86efac;
+  }
+
+  .project-description {
+    color: var(--text-secondary);
+  }
+
+  .page-description {
+    @apply text-lg;
+    color: var(--text-secondary);
+  }
+
+  /* Homepage */
+  .homepage-tagline {
+    @apply text-xl;
+    color: var(--text-secondary);
+  }
+
+  .homepage-link-text {
+    color: var(--text-secondary);
+  }
+
+  .homepage-link {
+    @apply underline transition-colors;
+  }
+
+  .homepage-link:hover {
+    color: var(--text-primary);
+  }
+
+  /* Articles page */
+  .article-item {
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .article-date {
+    @apply text-sm;
+    color: var(--text-tertiary);
+  }
+
+  .article-excerpt {
+    color: var(--text-secondary);
+  }
+
+  .article-tag {
+    @apply px-2 py-1 rounded text-xs;
+    background-color: var(--bg-tertiary);
+    color: var(--text-secondary);
+  }
+
+  /* Pagination */
+  .pagination-btn {
+    @apply px-4 py-2 rounded transition-colors no-underline;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .pagination-btn:hover {
+    background-color: var(--border-color-dark);
+  }
+
+  .pagination-btn-disabled {
+    @apply px-4 py-2 rounded cursor-not-allowed;
+    background-color: var(--bg-secondary);
+    color: var(--text-tertiary);
+  }
+
+  .pagination-page {
+    @apply px-3 py-2 rounded transition-colors no-underline;
+    background-color: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .pagination-page:hover {
+    background-color: var(--border-color-dark);
+  }
+
+  .pagination-page-active {
+    @apply px-3 py-2 rounded font-bold;
+    background-color: var(--color-primary-600);
+    color: #ffffff;
+  }
+
+  .pagination-info {
+    @apply text-center text-sm mt-4;
+    color: var(--text-tertiary);
   }
 
   /* Syntax Highlighting for Code Blocks */

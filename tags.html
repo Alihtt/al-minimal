@@ -11,8 +11,8 @@ permalink: /tags/
 
   <div class="flex flex-wrap gap-3 mb-12">
     {% for tag in sorted_tags %}
-    <a href="#{{ tag[0] | slugify }}" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
-      {{ tag[0] }} <span class="text-gray-500">({{ tag[1] | size }})</span>
+    <a href="#{{ tag[0] | slugify }}" class="tag-badge">
+      {{ tag[0] }} <span class="tag-count">({{ tag[1] | size }})</span>
     </a>
     {% endfor %}
   </div>

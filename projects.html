@@ -7,7 +7,7 @@ permalink: /projects/
 <div class="py-12 max-w-6xl mx-auto">
   <header class="mb-12">
     <h1 class="text-4xl font-bold mb-4">My Projects</h1>
-    <p class="text-gray-400 text-lg">
+    <p class="page-description">
       A collection of open-source projects and tools I've built.
     </p>
   </header>
@@ -21,7 +21,7 @@ permalink: /projects/
     </h2>
     <div class="grid md:grid-cols-2 gap-6">
       {% for project in featured %}
-      <article class="bg-gray-900/50 border border-gray-700 rounded-lg p-6 hover:border-primary-500 transition-colors">
+      <article class="project-card rounded-lg p-6 hover:border-primary-500 transition-colors">
         <div class="flex items-start justify-between mb-3">
           <h3 class="text-xl font-bold text-dark-text">
             <a href="{{ project.url | relative_url }}" class="hover:text-primary-400 transition-colors">
@@ -29,18 +29,18 @@ permalink: /projects/
             </a>
           </h3>
           {% if project.status %}
-          <span class="px-2 py-1 bg-green-900/50 text-green-300 text-xs rounded">
+          <span class="status-badge">
             {{ project.status }}
           </span>
           {% endif %}
         </div>
 
-        <p class="text-gray-400 mb-4">{{ project.description }}</p>
+        <p class="project-description mb-4">{{ project.description }}</p>
 
         {% if project.tech %}
         <div class="flex flex-wrap gap-2 mb-4">
           {% for tech in project.tech %}
-          <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs">
+          <span class="tech-tag">
             {{ tech }}
           </span>
           {% endfor %}
@@ -80,7 +80,7 @@ permalink: /projects/
     <h2 class="text-2xl font-bold mb-6">All Projects</h2>
     <div class="space-y-4">
       {% for project in all_projects %}
-      <article class="border-b border-gray-800 pb-4">
+      <article class="project-list-item pb-4">
         <div class="flex items-start justify-between mb-2">
           <h3 class="text-xl font-semibold">
             <a href="{{ project.url | relative_url }}" class="text-dark-text hover:underline">
@@ -90,12 +90,12 @@ permalink: /projects/
           <time class="text-gray-500 text-sm">{{ project.date | date: "%Y-%m-%d" }}</time>
         </div>
 
-        <p class="text-gray-400 mb-3">{{ project.description }}</p>
+        <p class="project-description mb-3">{{ project.description }}</p>
 
         {% if project.tech %}
         <div class="flex flex-wrap gap-2">
           {% for tech in project.tech %}
-          <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs">
+          <span class="tech-tag">
             {{ tech }}
           </span>
           {% endfor %}
