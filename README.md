@@ -23,19 +23,29 @@ A modern, minimal personal blog built with Jekyll and Tailwind CSS. Perfect for 
 
 ### Quick Start
 
+1. **Click "Use this template"** button at the top of this repository
+2. **Create a new repository** from the template
+   - Name it `yourusername.github.io` (for GitHub Pages)
+   - Choose public or private
+   - Click "Create repository"
+3. **Clone your new repository**:
+
 ```bash
-# 1. Fork/Clone this repository
 git clone https://github.com/yourusername/yourusername.github.io.git
 cd yourusername.github.io
+```
 
-# 2. Install dependencies
+4. **Install dependencies and run**:
+
+```bash
+# Install dependencies
 bundle install
 npm install
 
-# 3. Build CSS
+# Build CSS
 npm run build:css
 
-# 4. Run locally
+# Run locally
 bundle exec jekyll serve
 ```
 

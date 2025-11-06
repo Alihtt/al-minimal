@@ -17,20 +17,27 @@ git --version
 
 ## Installation Methods
 
-### Method 1: Use as Template (Recommended)
+### Method 1: Use as Template (Recommended - Fastest!)
 
-1. Click **"Use this template"** button on GitHub
-2. Name your repo: `username.github.io`
-3. Clone your new repo:
+This is the **fastest and easiest** way to get started:
+
+1. **Click "Use this template"** button at the top of the GitHub repository
+2. **Create a new repository** from the template:
+   - Name it `username.github.io` (replace `username` with your GitHub username)
+   - Choose public or private
+   - Click "Create repository"
+3. **Clone your new repository**:
    ```bash
    git clone https://github.com/username/username.github.io.git
    cd username.github.io
    ```
 
-### Method 2: Fork
+### Method 2: Fork (Alternative)
+
+If you prefer to fork:
 
 1. Fork this repository
-2. Rename to: `username.github.io`
+2. Rename to: `username.github.io` (Settings → Repository name)
 3. Clone your fork:
    ```bash
    git clone https://github.com/username/username.github.io.git
