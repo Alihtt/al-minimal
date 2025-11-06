@@ -1,0 +1,13 @@
+<div class="flex gap-4 mt-6">
+  {% for social in site.social %}
+  <a href="{{ social.link }}"
+     target="_blank"
+     rel="noopener noreferrer"
+     class="text-gray-400 hover:text-primary-400 transition-colors text-xl"
+     aria-label="{{ social.name }}"
+     title="{{ social.name }}">
+    <i class="{{ social.icon }}"></i>
+  </a>
+  {% endfor %}
+</div>
+

@@ -1,0 +1,285 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom Colors - Theme Configuration */
+  --color-dark-bg: #1a1a1a;
+  --color-dark-text: #e0e0e0;
+
+  /* Primary theme color - change these to change the entire site theme! */
+  --color-primary-300: #c084fc;
+  /* light purple (hover states) */
+  --color-primary-400: #a855f7;
+  /* purple (main primary) */
+  --color-primary-500: #9333ea;
+  /* medium purple */
+  --color-primary-600: #7e22ce;
+  /* dark purple (buttons) */
+  --color-primary-700: #6b21a8;
+  /* darker purple (button hover) */
+
+  /* Font Family */
+  --font-sans: 'Atkinson Hyperlegible', system-ui, -apple-system, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-dark-bg text-dark-text antialiased font-sans;
+  }
+
+  a:hover,
+  button:hover {
+    @apply text-primary-500 underline decoration-2 decoration-primary-500;
+  }
+}
+
+@layer utilities {
+  .line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+}
+
+@layer components {
+
+  /* Table of Contents Styles */
+  .toc-inline {
+    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5 mb-10;
+  }
+
+  .toc-header {
+    @apply text-base font-bold text-dark-text mb-3 flex items-center gap-2;
+  }
+
+  .toc-emoji {
+    @apply text-base;
+  }
+
+  .toc-list {
+    @apply space-y-0 list-none;
+  }
+
+  .toc-item {
+    @apply leading-normal;
+  }
+
+  .toc-h2 {
+    @apply mb-0;
+  }
+
+  .toc-sublist {
+    @apply ml-6 mt-1 space-y-0.5 pl-3 border-l-2 list-none;
+  }
+
+  .toc-link {
+    @apply transition-colors text-sm block py-0.5 no-underline;
+  }
+
+  .toc-link:hover {
+    @apply text-dark-text;
+    color: var(--color-primary-300);
+  }
+
+  .toc-link.active {
+    @apply font-bold;
+    color: var(--color-primary-400);
+  }
+
+  .toc-number {
+    @apply font-normal mr-1;
+    color: #6b7280;
+  }
+
+  .toc-link.active .toc-number {
+    color: var(--color-primary-400);
+  }
+
+  .toc-bullet {
+    @apply mr-1.5;
+  }
+
+  .toc-h3 .toc-link {
+    @apply text-xs;
+  }
+
+  .toc-h3 .toc-link.active {
+    @apply font-bold;
+    color: var(--color-primary-400);
+  }
+
+  /* Article Content Styles */
+  .article-content {
+    @apply text-gray-300 leading-relaxed text-base;
+  }
+
+  .article-content h2 {
+    @apply text-3xl font-bold mt-12 mb-6 text-dark-text scroll-mt-8;
+  }
+
+  .article-content h3 {
+    @apply text-2xl font-bold mt-8 mb-4 text-dark-text scroll-mt-8;
+  }
+
+  .article-content h4 {
+    @apply text-xl font-bold mt-6 mb-3 text-dark-text;
+  }
+
+  .article-content p {
+    @apply mb-5 leading-relaxed;
+  }
+
+  .article-content ul,
+  .article-content ol {
+    @apply mb-6 ml-6 space-y-2;
+  }
+
+  .article-content li {
+    @apply leading-relaxed;
+  }
+
+  .article-content ul li {
+    @apply list-disc;
+  }
+
+  .article-content ol li {
+    @apply list-decimal;
+  }
+
+  .article-content a {
+    @apply text-blue-400 hover:text-blue-300 underline;
+  }
+
+  .article-content strong {
+    @apply text-dark-text font-bold;
+  }
+
+  .article-content em {
+    @apply italic;
+  }
+
+  .article-content code {
+    @apply bg-gray-800 px-2 py-0.5 rounded text-sm font-mono;
+    color: #ff79c6;
+  }
+
+  .article-content pre {
+    @apply rounded-lg overflow-x-auto mb-6 border border-gray-800;
+    background-color: #1a1b26 !important;
+    padding: 1.25rem;
+  }
+
+  .article-content pre code {
+    @apply bg-transparent p-0 text-sm leading-relaxed font-mono;
+    background-color: transparent !important;
+  }
+
+  .article-content pre code.hljs {
+    @apply p-0;
+    background-color: transparent !important;
+  }
+
+  .article-content blockquote {
+    @apply border-l-4 border-gray-700 pl-6 pr-4 py-2 italic text-gray-400 my-6 bg-gray-900/30;
+  }
+
+  .article-content hr {
+    @apply border-gray-800 my-8;
+  }
+
+  /* Separator text */
+  .article-content .separator-text {
+    @apply text-gray-500 text-sm italic my-4;
+  }
+
+  /* Metadata Section */
+  .metadata-box {
+    @apply bg-gray-900/50 border border-gray-700 rounded-lg p-5;
+  }
+
+  .metadata-title {
+    @apply text-base font-bold text-dark-text mb-4;
+  }
+
+  .metadata-row {
+    @apply flex gap-4 mb-3 last:mb-0;
+  }
+
+  .metadata-label {
+    @apply text-dark-text font-normal min-w-[80px];
+  }
+
+  .metadata-value {
+    @apply text-gray-400;
+  }
+
+  .metadata-tags {
+    @apply flex flex-wrap gap-2;
+  }
+
+  .tag-pill {
+    @apply px-3 py-1 bg-gray-800 text-dark-text rounded-full text-sm no-underline hover:bg-gray-700 transition-colors;
+  }
+
+  /* Page Layout Styles */
+  .prose {
+    @apply text-gray-300 leading-relaxed;
+  }
+
+  .prose h2 {
+    @apply text-2xl font-bold mt-8 mb-4 text-dark-text;
+  }
+
+  .prose h3 {
+    @apply text-xl font-bold mt-6 mb-3 text-dark-text;
+  }
+
+  .prose p {
+    @apply mb-4;
+  }
+
+  .prose ul {
+    @apply mb-4 ml-6 space-y-2;
+  }
+
+  .prose li {
+    @apply list-disc;
+  }
+
+  .prose a {
+    @apply text-blue-400 hover:text-blue-300 underline;
+  }
+
+  .prose strong {
+    @apply text-dark-text font-bold;
+  }
+
+  /* Syntax Highlighting for Code Blocks */
+  .article-content pre code .comment {
+    color: #6272a4;
+  }
+
+  .article-content pre code .keyword {
+    color: #bd93f9;
+  }
+
+  .article-content pre code .class-name {
+    color: #8be9fd;
+  }
+
+  .article-content pre code .string {
+    color: #f1fa8c;
+  }
+
+  .article-content pre code .number {
+    color: #bd93f9;
+  }
+
+  .article-content pre code .function {
+    color: #50fa7b;
+  }
+
+  .article-content pre code .operator {
+    color: #ff79c6;
+  }
+}

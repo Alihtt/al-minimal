@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="{{ site.lang | default: 'en' }}" dir="{{ site.direction | default: 'ltr' }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ page.description | default: site.description }}">
+    <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+    {% seo %}
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/tokyo-night-dark.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="{{ '/assets/css/main.css' | relative_url }}">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ '/assets/images/favicon.ico' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ '/assets/images/favicon-32x32.png' | relative_url }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ '/assets/images/favicon-16x16.png' | relative_url }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ '/assets/images/apple-touch-icon.png' | relative_url }}">
+    <link rel="manifest" href="{{ '/site.webmanifest' | relative_url }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', (event) => {
+        document.querySelectorAll('pre code').forEach((block) => {
+          hljs.highlightElement(block);
+        });
+      });
+    </script>
+</head>
+<body class="min-h-screen bg-dark-bg text-dark-text">
+    {% include header.html %}
+
+    <main class="max-w-5xl mx-auto px-6 py-8">
+            {{ content }}
+    </main>
+
+    <footer class="max-w-5xl mx-auto px-6 py-8 mt-16 border-t border-gray-800">
+        <div class="text-center text-sm text-gray-500">
+            <p>&copy; {{ 'now' | date: "%Y" }} {{ site.title }}. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Search Modal -->
+    <div id="search-modal" class="fixed inset-0 bg-black/80 z-50 hidden items-center justify-center p-4">
+        <div class="bg-gray-900 border border-gray-700 rounded-lg max-w-2xl w-full max-h-[80vh] flex flex-col">
+            <!-- Search Header -->
+            <div class="p-4 border-b border-gray-800">
+                <div class="flex items-center gap-3">
+                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input
+                        type="text"
+                        id="search-input"
+                        placeholder="Search articles and projects..."
+                        class="flex-1 bg-transparent text-dark-text outline-none text-lg"
+                        autocomplete="off"
+                    />
+                    <button id="close-search" class="text-gray-400 hover:text-dark-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Search Results -->
+            <div id="search-results" class="overflow-y-auto flex-1 p-4">
+                <p class="text-gray-500 text-center py-8">Start typing to search...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // Enhanced Search Functionality
+        // ============================================
+
+        (function() {
+            'use strict';
+
+            // Search data
+            const searchData = {
+                posts: [
+                    {% for post in site.posts %}
+                    {
+                        title: {{ post.title | jsonify }},
+                        url: {{ post.url | relative_url | jsonify }},
+                        date: {{ post.date | date: "%Y-%m-%d" | jsonify }},
+                        excerpt: {{ post.excerpt | strip_html | truncatewords: 30 | jsonify }},
+                        tags: {{ post.tags | jsonify }},
+                        type: 'post'
+                    }{% unless forloop.last %},{% endunless %}
+                    {% endfor %}
+                ],
+                projects: [
+                    {% for project in site.projects %}
+                    {
+                        title: {{ project.title | jsonify }},
+                        url: {{ project.url | relative_url | jsonify }},
+                        description: {{ project.description | jsonify }},
+                        tech: {{ project.tech | jsonify }},
+                        type: 'project'
+                    }{% unless forloop.last %},{% endunless %}
+                    {% endfor %}
+                ]
+            };
+
+            // DOM elements
+            const elements = {
+                modal: document.getElementById('search-modal'),
+                button: document.getElementById('search-button'),
+                closeBtn: document.getElementById('close-search'),
+                input: document.getElementById('search-input'),
+                results: document.getElementById('search-results')
+            };
+
+            // State
+            let selectedIndex = -1;
+            let currentResults = [];
+            let debounceTimer = null;
+
+            // ============================================
+            // Utility Functions
+            // ============================================
+
+            /**
+             * Debounce function to limit search execution
+             */
+            function debounce(func, delay) {
+                return function(...args) {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => func.apply(this, args), delay);
+                };
+            }
+
+            /**
+             * Highlight search query in text
+             */
+            function highlightText(text, query) {
+                if (!query || !text) return text;
+                const regex = new RegExp(`(${query})`, 'gi');
+                return text.replace(regex, '<mark class="bg-yellow-500/30 text-yellow-200">$1</mark>');
+            }
+
+            /**
+             * Calculate relevance score for search results
+             */
+            function calculateRelevance(item, query) {
+                let score = 0;
+                const lowerQuery = query.toLowerCase();
+                const title = item.title.toLowerCase();
+
+                // Title exact match (highest priority)
+                if (title === lowerQuery) score += 100;
+                // Title starts with query
+                else if (title.startsWith(lowerQuery)) score += 50;
+                // Title contains query
+                else if (title.includes(lowerQuery)) score += 25;
+
+                // Tag/tech match
+                const tags = item.tags || item.tech || [];
+                if (tags.some(t => t.toLowerCase() === lowerQuery)) score += 30;
+                else if (tags.some(t => t.toLowerCase().includes(lowerQuery))) score += 15;
+
+                // Description/excerpt match
+                const description = (item.description || item.excerpt || '').toLowerCase();
+                if (description.includes(lowerQuery)) score += 10;
+
+                return score;
+            }
+
+            // ============================================
+            // Search Functions
+            // ============================================
+
+            /**
+             * Perform search with relevance scoring
+             */
+            function performSearch(query) {
+                const lowerQuery = query.toLowerCase();
+                const allItems = [...searchData.posts, ...searchData.projects];
+
+                const results = allItems
+                    .filter(item => {
+                        const titleMatch = item.title.toLowerCase().includes(lowerQuery);
+                        const descMatch = (item.description?.toLowerCase() || item.excerpt?.toLowerCase() || '').includes(lowerQuery);
+                        const tagMatch = (item.tags || []).some(tag => tag.toLowerCase().includes(lowerQuery));
+                        const techMatch = (item.tech || []).some(tech => tech.toLowerCase().includes(lowerQuery));
+                        return titleMatch || descMatch || tagMatch || techMatch;
+                    })
+                    .map(item => ({
+                        ...item,
+                        relevance: calculateRelevance(item, query)
+                    }))
+                    .sort((a, b) => b.relevance - a.relevance);
+
+                return results;
+            }
+
+            /**
+             * Render a single search result item
+             */
+            function renderResultItem(item, query, index) {
+                const isPost = item.type === 'post';
+                const icon = isPost ? '📝' : '🚀';
+                const typeLabel = isPost ? 'Article' : 'Project';
+                const description = item.excerpt || item.description || '';
+                const isSelected = index === selectedIndex;
+
+                return `
+                    <a href="${item.url}"
+                       class="search-result-item block p-4 rounded-lg transition-all border ${
+                           isSelected
+                               ? 'bg-gray-800 border-primary-500'
+                               : 'border-transparent hover:bg-gray-800 hover:border-gray-700'
+                       }"
+                       data-index="${index}">
+                        <div class="flex items-start gap-3">
+                            <span class="text-2xl flex-shrink-0">${icon}</span>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center gap-2 mb-1 flex-wrap">
+                                    <h3 class="text-lg font-semibold text-dark-text">${highlightText(item.title, query)}</h3>
+                                    <span class="text-xs px-2 py-1 bg-gray-800 text-gray-400 rounded flex-shrink-0">${typeLabel}</span>
+                                </div>
+                                ${item.date ? `<p class="text-xs text-gray-500 mb-2">${item.date}</p>` : ''}
+                                ${description ? `<p class="text-sm text-gray-400 line-clamp-2">${highlightText(description, query)}</p>` : ''}
+                                ${item.tags ? `
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        ${item.tags.slice(0, 3).map(tag => `
+                                            <span class="text-xs px-2 py-0.5 bg-gray-800 text-gray-400 rounded">#${tag}</span>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                                ${item.tech ? `
+                                    <div class="flex flex-wrap gap-1 mt-2">
+                                        ${item.tech.slice(0, 4).map(tech => `
+                                            <span class="text-xs px-2 py-0.5 bg-gray-800 text-gray-400 rounded">${tech}</span>
+                                        `).join('')}
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    </a>
+                `;
+            }
+
+            /**
+             * Display search results
+             */
+            function displayResults(results, query) {
+                currentResults = results;
+                selectedIndex = -1;
+
+                if (results.length === 0) {
+                    elements.results.innerHTML = '<p class="text-gray-500 text-center py-8">No results found</p>';
+                    return;
+                }
+
+                const resultsHTML = results
+                    .map((item, index) => renderResultItem(item, query, index))
+                    .join('');
+
+                elements.results.innerHTML = resultsHTML;
+            }
+
+            /**
+             * Handle search input with debouncing
+             */
+            const handleSearch = debounce((query) => {
+                const trimmedQuery = query.trim();
+
+                if (trimmedQuery.length < 2) {
+                    elements.results.innerHTML = '<p class="text-gray-500 text-center py-8">Start typing to search...</p>';
+                    currentResults = [];
+                    return;
+                }
+
+                const results = performSearch(trimmedQuery);
+                displayResults(results, trimmedQuery);
+            }, 200);
+
+            // ============================================
+            // Modal Functions
+            // ============================================
+
+            function openModal() {
+                elements.modal.classList.remove('hidden');
+                elements.modal.classList.add('flex');
+                elements.input.focus();
+            }
+
+            function closeModal() {
+                elements.modal.classList.add('hidden');
+                elements.modal.classList.remove('flex');
+                elements.input.value = '';
+                elements.results.innerHTML = '<p class="text-gray-500 text-center py-8">Start typing to search...</p>';
+                currentResults = [];
+                selectedIndex = -1;
+            }
+
+            // ============================================
+            // Keyboard Navigation
+            // ============================================
+
+            function updateSelection(newIndex) {
+                if (currentResults.length === 0) return;
+
+                selectedIndex = newIndex;
+
+                // Clamp index
+                if (selectedIndex < 0) selectedIndex = currentResults.length - 1;
+                if (selectedIndex >= currentResults.length) selectedIndex = 0;
+
+                // Re-render results with new selection
+                displayResults(currentResults, elements.input.value);
+
+                // Scroll selected item into view
+                const selectedElement = elements.results.querySelector(`[data-index="${selectedIndex}"]`);
+                if (selectedElement) {
+                    selectedElement.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+                }
+            }
+
+            function handleKeyDown(e) {
+                // Only handle when modal is open
+                if (elements.modal.classList.contains('hidden')) {
+                    // Global shortcut: Ctrl/Cmd + K
+                    if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                        e.preventDefault();
+                        openModal();
+                    }
+                    return;
+                }
+
+                switch(e.key) {
+                    case 'Escape':
+                        closeModal();
+                        break;
+
+                    case 'ArrowDown':
+                        e.preventDefault();
+                        updateSelection(selectedIndex + 1);
+                        break;
+
+                    case 'ArrowUp':
+                        e.preventDefault();
+                        updateSelection(selectedIndex - 1);
+                        break;
+
+                    case 'Enter':
+                        e.preventDefault();
+                        if (selectedIndex >= 0 && currentResults[selectedIndex]) {
+                            window.location.href = currentResults[selectedIndex].url;
+                        }
+                        break;
+                }
+            }
+
+            // ============================================
+            // Event Listeners
+            // ============================================
+
+            elements.button.addEventListener('click', openModal);
+            elements.closeBtn.addEventListener('click', closeModal);
+            elements.modal.addEventListener('click', (e) => {
+                if (e.target === elements.modal) closeModal();
+            });
+
+            elements.input.addEventListener('input', (e) => {
+                handleSearch(e.target.value);
+            });
+
+            document.addEventListener('keydown', handleKeyDown);
+
+            // Mouse hover on results
+            elements.results.addEventListener('mouseover', (e) => {
+                const resultItem = e.target.closest('.search-result-item');
+                if (resultItem) {
+                    const index = parseInt(resultItem.dataset.index);
+                    if (index !== selectedIndex) {
+                        updateSelection(index);
+                    }
+                }
+            });
+
+        })();
+    </script>
+</body>
+</html>
+

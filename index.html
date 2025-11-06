@@ -1,0 +1,57 @@
+---
+layout: default
+---
+
+<!-- Introduction Section -->
+<div class="py-12">
+  <h1 class="text-5xl font-bold mb-4">{{ site.greeting }}</h1>
+  <p class="text-xl text-gray-400 mb-6">{{ site.tagline }}</p>
+
+  {% include social-icons.html %}
+</div>
+
+<!-- Featured Projects Section -->
+{% assign featured_projects = site.projects | where: "featured", true | sort: 'date' | reverse %}
+{% if featured_projects.size > 0 %}
+<div class="py-12">
+  <h2 class="text-4xl font-bold mb-8">Featured Projects</h2>
+
+  <div class="space-y-4">
+    {% for project in featured_projects limit:5 %}
+    <div class="flex gap-4 items-baseline">
+      <span class="text-gray-500 text-sm whitespace-nowrap">{{ project.date | date: "%Y-%m-%d" }}</span>
+      <a href="{{ project.url | relative_url }}" class="text-dark-text hover:underline">
+        {{ project.title }}
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p class="mt-6 text-gray-400">
+    view all projects in <a href="{{ '/projects' | relative_url }}" class="underline hover:text-dark-text transition-colors">the projects page</a>.
+  </p>
+</div>
+{% endif %}
+
+<!-- Latest Articles Section -->
+<div class="py-12">
+  <h2 class="text-4xl font-bold mb-8">Latest Articles</h2>
+
+  <div class="space-y-4">
+    {% assign sorted_posts = site.posts | sort: 'date' | reverse %}
+    {% for post in sorted_posts limit:5 %}
+    <div class="flex gap-4 items-baseline">
+      <span class="text-gray-500 text-sm whitespace-nowrap">{{ post.date | date: "%Y-%m-%d" }}</span>
+      <a href="{{ post.url | relative_url }}" class="text-dark-text hover:underline">
+        {{ post.title }}
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+
+  <p class="mt-6 text-gray-400">
+    more articles can be found in <a href="{{ '/articles' | relative_url }}" class="underline hover:text-dark-text transition-colors">the archive</a>.
+  </p>
+</div>
+
+

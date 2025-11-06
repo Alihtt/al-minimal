@@ -1,0 +1,78 @@
+<header class="max-w-5xl mx-auto px-6 py-6 md:py-8 border-b border-gray-800">
+  <div class="flex justify-between items-center">
+    <!-- Logo/Name -->
+    <a href="{{ '/' | relative_url }}" class="text-lg md:text-xl font-bold text-dark-text hover:opacity-80 transition-opacity">
+      {{ site.title | upcase }}
+    </a>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-button" class="md:hidden text-dark-text p-2" aria-label="Menu">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+
+    <!-- Desktop Navigation and Search -->
+    <div class="hidden md:flex items-center gap-8">
+      <!-- Navigation Links -->
+      <nav class="flex gap-6">
+        {% for item in site.navigation %}
+        <a href="{{ item.url | relative_url }}" class="text-dark-text hover:underline transition-all uppercase text-sm">
+          {{ item.title }}
+        </a>
+        {% endfor %}
+      </nav>
+
+      <!-- Search -->
+      <button id="search-button" class="text-dark-text hover:text-gray-400 transition-colors" aria-label="Search">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden mt-4 pt-4 border-t border-gray-800">
+    <nav class="flex flex-col gap-4">
+      {% for item in site.navigation %}
+      <a href="{{ item.url | relative_url }}" class="text-dark-text hover:text-primary-400 transition-all uppercase text-sm py-2">
+        {{ item.title }}
+      </a>
+      {% endfor %}
+      <button id="search-button-mobile" class="text-dark-text hover:text-primary-400 transition-all uppercase text-sm py-2 text-left flex items-center gap-2">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+        </svg>
+        SEARCH
+      </button>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuButton = document.getElementById('mobile-menu-button');
+  const mobileMenu = document.getElementById('mobile-menu');
+
+  mobileMenuButton.addEventListener('click', () => {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // Mobile search button
+  const searchButtonMobile = document.getElementById('search-button-mobile');
+  if (searchButtonMobile) {
+    searchButtonMobile.addEventListener('click', () => {
+      document.getElementById('search-button').click();
+      mobileMenu.classList.add('hidden');
+    });
+  }
+
+  // Close mobile menu when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!mobileMenuButton.contains(e.target) && !mobileMenu.contains(e.target)) {
+      mobileMenu.classList.add('hidden');
+    }
+  });
+</script>
+

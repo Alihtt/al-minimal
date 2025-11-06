@@ -1,0 +1,207 @@
+---
+layout: default
+---
+
+<article class="max-w-5xl mx-auto">
+  <header class="mb-8">
+    <h1 class="text-5xl font-bold mb-4 text-dark-text">{{ page.title }}</h1>
+    <div class="text-gray-500 text-sm mb-8">
+      <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+      {% if page.author %} • <span>{{ page.author }}</span>{% endif %}
+    </div>
+  </header>
+
+  <!-- Table of Contents -->
+  {% if page.toc %}
+  <nav class="toc-inline mb-12">
+    <div class="toc-header"><span class="toc-emoji">🚀</span> Table of Contents</div>
+    <ol class="toc-list">
+      {% assign section_num = 0 %}
+      {% for item in page.toc %}
+        {% assign section_num = section_num | plus: 1 %}
+        <li class="toc-item toc-h2">
+          <a href="#{{ item.id }}" class="toc-link" data-target="{{ item.id }}">
+            <span class="toc-number">{{ section_num }}.</span> {{ item.title }}
+          </a>
+          {% if item.subsections %}
+          <ul class="toc-sublist">
+            {% for subsection in item.subsections %}
+            <li class="toc-item toc-h3">
+              <a href="#{{ subsection.id }}" class="toc-link" data-target="{{ subsection.id }}">
+                <span class="toc-bullet">•</span> {{ subsection.title }}
+              </a>
+            </li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ol>
+  </nav>
+  {% endif %}
+
+  <div class="article-content">
+    {{ content }}
+  </div>
+
+  <!-- Metadata Section -->
+  <div class="metadata-box mt-12">
+    <h3 class="metadata-title">Metadata</h3>
+
+    <div class="metadata-row">
+      <span class="metadata-label">Published</span>
+      <span class="metadata-value">{{ page.date | date: "%Y-%m-%d" }}</span>
+    </div>
+
+    {% if page.tags and page.tags.size > 0 %}
+    <div class="metadata-row">
+      <span class="metadata-label">Tags</span>
+      <div class="metadata-tags">
+        {% for tag in page.tags %}
+        <a href="{{ '/tags' | relative_url }}#{{ tag | slugify }}" class="tag-pill">#{{ tag }}</a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Share Buttons -->
+  {% include share-buttons.html type="article" %}
+
+  <footer class="mt-16 pt-8 border-t border-gray-800">
+    <div class="flex justify-between">
+      {% if page.previous.url %}
+      <a href="{{ page.previous.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
+        ← {{ page.previous.title }}
+      </a>
+      {% endif %}
+      {% if page.next.url %}
+      <a href="{{ page.next.url | relative_url }}" class="text-gray-400 hover:text-dark-text transition-colors">
+        {{ page.next.title }} →
+      </a>
+      {% endif %}
+    </div>
+  </footer>
+</article>
+
+<script>
+// ============================================
+// Table of Contents Active State
+// ============================================
+(function() {
+  'use strict';
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const toc = document.querySelector('.toc-inline');
+    if (!toc) return;
+
+    const tocLinks = toc.querySelectorAll('.toc-link');
+    const allHeadings = document.querySelectorAll('h2[id], h3[id]');
+
+    if (tocLinks.length === 0 || allHeadings.length === 0) return;
+
+    let isManualClick = false;
+    let manualClickTimeout;
+
+    /**
+     * Update active TOC link based on scroll position
+     */
+    function updateActiveToc() {
+      if (isManualClick) return; // Don't update during manual navigation
+
+      // Find the heading that's currently most visible
+      let currentHeading = null;
+      let minDistance = Infinity;
+
+      allHeadings.forEach(heading => {
+        const rect = heading.getBoundingClientRect();
+        const distance = Math.abs(rect.top - 100);
+
+        // Prioritize headings in the upper half of viewport
+        if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+          if (distance < minDistance) {
+            minDistance = distance;
+            currentHeading = heading;
+          }
+        }
+      });
+
+      // Fallback: if no heading in upper half, use the last one above viewport
+      if (!currentHeading) {
+        for (let i = allHeadings.length - 1; i >= 0; i--) {
+          const rect = allHeadings[i].getBoundingClientRect();
+          if (rect.top < window.innerHeight / 2) {
+            currentHeading = allHeadings[i];
+            break;
+          }
+        }
+      }
+
+      // Update active state
+      if (currentHeading) {
+        const id = currentHeading.id;
+        tocLinks.forEach(link => {
+          if (link.dataset.target === id) {
+            tocLinks.forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+          }
+        });
+      }
+    }
+
+    /**
+     * Throttle function for scroll events
+     */
+    let scrollTimeout;
+    function handleScroll() {
+      clearTimeout(scrollTimeout);
+      scrollTimeout = setTimeout(updateActiveToc, 50);
+    }
+
+    // Listen for scroll events
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    // Handle TOC link clicks
+    tocLinks.forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Mark as manual click
+        isManualClick = true;
+        clearTimeout(manualClickTimeout);
+
+        // Immediately set active state
+        tocLinks.forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+
+        // Scroll to target
+        const targetId = link.getAttribute('href').substring(1);
+        const targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          history.pushState(null, null, '#' + targetId);
+        }
+
+        // Re-enable auto-update after scroll animation completes
+        manualClickTimeout = setTimeout(() => {
+          isManualClick = false;
+        }, 1000);
+      });
+    });
+
+    // Initial update
+    updateActiveToc();
+
+    // Update on page load if there's a hash in URL
+    if (window.location.hash) {
+      const hash = window.location.hash.substring(1);
+      tocLinks.forEach(link => {
+        if (link.dataset.target === hash) {
+          link.classList.add('active');
+        }
+      });
+    }
+  });
+})();
+</script>
+

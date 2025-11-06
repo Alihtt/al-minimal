@@ -1,0 +1,83 @@
+---
+layout: default
+title: Articles
+pagination:
+  enabled: true
+---
+
+<div class="py-12 max-w-4xl mx-auto">
+  <h1 class="text-4xl font-bold mb-12">All Articles</h1>
+
+  <div class="space-y-6">
+    {% for post in paginator.posts %}
+    <article class="border-b border-gray-800 pb-6">
+      <time class="text-gray-500 text-sm" datetime="{{ post.date | date_to_xmlschema }}">
+        {{ post.date | date: "%Y-%m-%d" }}
+      </time>
+      <h2 class="text-2xl font-semibold mt-2 mb-2">
+        <a href="{{ post.url | relative_url }}" class="text-dark-text hover:underline">
+          {{ post.title }}
+        </a>
+      </h2>
+      {% if post.excerpt %}
+      <p class="text-gray-400">{{ post.excerpt | strip_html | truncatewords: 30 }}</p>
+      {% endif %}
+      {% if post.tags and post.tags.size > 0 %}
+      <div class="flex flex-wrap gap-2 mt-3">
+        {% for tag in post.tags limit:3 %}
+        <span class="px-2 py-1 bg-gray-800 text-gray-300 rounded text-xs">#{{ tag }}</span>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </article>
+    {% endfor %}
+  </div>
+
+  <!-- Pagination Controls -->
+  {% if paginator.total_pages > 1 %}
+  <div class="flex justify-center items-center gap-4 mt-12">
+    {% if paginator.previous_page %}
+    <a href="{{ paginator.previous_page_path | relative_url }}" class="px-4 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+      ← Previous
+    </a>
+    {% else %}
+    <span class="px-4 py-2 bg-gray-900 text-gray-600 rounded cursor-not-allowed">
+      ← Previous
+    </span>
+    {% endif %}
+
+    <div class="flex items-center gap-2">
+      {% for page in (1..paginator.total_pages) %}
+        {% if page == paginator.page %}
+          <span class="px-3 py-2 bg-primary-600 text-white rounded font-bold">
+            {{ page }}
+          </span>
+        {% elsif page == 1 %}
+          <a href="{{ '/articles/' | relative_url }}" class="px-3 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+            {{ page }}
+          </a>
+        {% else %}
+          <a href="{{ '/articles/page/' | append: page | append: '/' | relative_url }}" class="px-3 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+            {{ page }}
+          </a>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    {% if paginator.next_page %}
+    <a href="{{ paginator.next_page_path | relative_url }}" class="px-4 py-2 bg-gray-800 text-dark-text rounded hover:bg-gray-700 transition-colors">
+      Next →
+    </a>
+    {% else %}
+    <span class="px-4 py-2 bg-gray-900 text-gray-600 rounded cursor-not-allowed">
+      Next →
+    </span>
+    {% endif %}
+  </div>
+
+  <p class="text-center text-gray-500 text-sm mt-4">
+    Page {{ paginator.page }} of {{ paginator.total_pages }}
+  </p>
+  {% endif %}
+</div>
+

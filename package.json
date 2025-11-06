@@ -1,0 +1,14 @@
+{
+    "name": "jekyll-blog-template",
+    "version": "1.0.0",
+    "type": "module",
+    "description": "A minimal Jekyll blog template",
+    "scripts": {
+        "build:css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --minify",
+        "watch:css": "npx tailwindcss -i ./assets/css/input.css -o ./assets/css/main.css --watch"
+    },
+    "devDependencies": {
+        "@tailwindcss/cli": "^4.0.0",
+        "tailwindcss": "^4.0.0"
+    }
+}

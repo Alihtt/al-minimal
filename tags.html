@@ -1,0 +1,38 @@
+---
+layout: default
+title: Tags
+permalink: /tags/
+---
+
+<div class="py-12">
+  <h1 class="text-4xl font-bold mb-12">Tags</h1>
+
+  {% assign sorted_tags = site.tags | sort %}
+
+  <div class="flex flex-wrap gap-3 mb-12">
+    {% for tag in sorted_tags %}
+    <a href="#{{ tag[0] | slugify }}" class="px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-lg transition-colors">
+      {{ tag[0] }} <span class="text-gray-500">({{ tag[1] | size }})</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  <div class="space-y-12">
+    {% for tag in sorted_tags %}
+    <section id="{{ tag[0] | slugify }}" class="scroll-mt-24">
+      <h2 class="text-3xl font-bold mb-6">{{ tag[0] }}</h2>
+      <div class="space-y-4">
+        {% for post in tag[1] %}
+        <div class="flex gap-4 items-baseline">
+          <span class="text-gray-500 text-sm whitespace-nowrap">{{ post.date | date: "%Y-%m-%d" }}</span>
+          <a href="{{ post.url | relative_url }}" class="text-dark-text hover:underline">
+            {{ post.title }}
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+    </section>
+    {% endfor %}
+  </div>
+</div>
+
