@@ -1,5 +1,7 @@
 # 📝 Minimal Jekyll Blog
 
+[![Preview](readme_preview/preview.png)](https://alihtt.github.io/)
+
 A modern, minimal personal blog built with Jekyll and Tailwind CSS. Perfect for developers who want a clean, professional blog on GitHub Pages.
 
 [![Jekyll](https://img.shields.io/badge/Jekyll-4.4+-CC0000?style=flat-square&logo=jekyll)](https://jekyllrb.com/)
