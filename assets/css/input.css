@@ -31,7 +31,8 @@
   --card-border: #e5e7eb;
   --code-bg: #f3f4f6;
   --code-text: #db2777;
-  --pre-bg: #1a1b26;
+  --pre-bg: #f8f9fa;
+  --pre-text: #24292e;
 }
 
 [data-theme="dark"] {
@@ -49,6 +50,7 @@
   --code-bg: #262626;
   --code-text: #ff79c6;
   --pre-bg: #1a1b26;
+  --pre-text: #e0e0e0;
 }
 
 @theme {
@@ -268,6 +270,7 @@
   .article-content pre code {
     @apply bg-transparent p-0 text-sm leading-relaxed font-mono;
     background-color: transparent !important;
+    color: var(--pre-text);
   }
 
   .article-content pre code.hljs {
@@ -285,6 +288,32 @@
   .article-content hr {
     @apply my-8;
     border-color: var(--border-color);
+  }
+
+  /* Tables */
+  .article-content table {
+    @apply w-full my-6 border-collapse;
+    border: 1px solid var(--border-color);
+  }
+
+  .article-content thead {
+    background-color: var(--bg-tertiary);
+  }
+
+  .article-content th {
+    @apply font-semibold text-left px-4 py-3;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .article-content td {
+    @apply px-4 py-3;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+
+  .article-content tbody tr:hover {
+    background-color: var(--bg-secondary);
   }
 
   /* Separator text */
@@ -366,6 +395,31 @@
   .prose strong {
     @apply font-bold;
     color: var(--text-primary);
+  }
+
+  .prose table {
+    @apply w-full my-6 border-collapse;
+    border: 1px solid var(--border-color);
+  }
+
+  .prose thead {
+    background-color: var(--bg-tertiary);
+  }
+
+  .prose th {
+    @apply font-semibold text-left px-4 py-3;
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .prose td {
+    @apply px-4 py-3;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+
+  .prose tbody tr:hover {
+    background-color: var(--bg-secondary);
   }
 
   /* Theme Toggle Button */
@@ -534,32 +588,66 @@
     color: var(--text-tertiary);
   }
 
-  /* Syntax Highlighting for Code Blocks */
+  /* Syntax Highlighting for Code Blocks - Light Mode */
   .article-content pre code .comment {
-    color: #6272a4;
+    color: #6a737d;
   }
 
   .article-content pre code .keyword {
-    color: #bd93f9;
+    color: #d73a49;
   }
 
   .article-content pre code .class-name {
-    color: #8be9fd;
+    color: #6f42c1;
   }
 
   .article-content pre code .string {
-    color: #f1fa8c;
+    color: #032f62;
   }
 
   .article-content pre code .number {
-    color: #bd93f9;
+    color: #005cc5;
   }
 
   .article-content pre code .function {
-    color: #50fa7b;
+    color: #6f42c1;
   }
 
   .article-content pre code .operator {
+    color: #d73a49;
+  }
+
+  /* Make all token types darker in light mode */
+  .article-content pre code .token {
+    color: #24292e;
+  }
+
+  /* Syntax Highlighting for Code Blocks - Dark Mode */
+  [data-theme="dark"] .article-content pre code .comment {
+    color: #6272a4;
+  }
+
+  [data-theme="dark"] .article-content pre code .keyword {
+    color: #bd93f9;
+  }
+
+  [data-theme="dark"] .article-content pre code .class-name {
+    color: #8be9fd;
+  }
+
+  [data-theme="dark"] .article-content pre code .string {
+    color: #f1fa8c;
+  }
+
+  [data-theme="dark"] .article-content pre code .number {
+    color: #bd93f9;
+  }
+
+  [data-theme="dark"] .article-content pre code .function {
+    color: #50fa7b;
+  }
+
+  [data-theme="dark"] .article-content pre code .operator {
     color: #ff79c6;
   }
 }
