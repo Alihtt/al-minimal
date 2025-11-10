@@ -5,27 +5,34 @@ permalink: /tags/
 ---
 
 <div class="py-12">
-  <h1 class="text-4xl font-bold mb-12">Tags</h1>
+  <div class="mb-8">
+    <h1 class="text-4xl font-bold mb-4">Tags</h1>
+    <p id="selected-tag-title" class="text-xl" style="color: var(--text-secondary); display: none;">
+      Showing articles tagged with: <span id="selected-tag-name" class="font-semibold" style="color: var(--text-primary);"></span>
+      <button onclick="clearTagSelection()" class="ml-4 text-sm tag-badge hover:opacity-80 transition-opacity">
+        ← Back to all tags
+      </button>
+    </p>
+  </div>
 
   {% assign sorted_tags = site.tags | sort %}
 
-  <div class="flex flex-wrap gap-3 mb-12">
+  <div id="tags-list" class="flex flex-wrap gap-3 mb-12">
     {% for tag in sorted_tags %}
-    <a href="#{{ tag[0] | slugify }}" class="tag-badge">
+    <a href="{{ '/tags' | relative_url }}#{{ tag[0] | slugify }}" class="tag-badge">
       {{ tag[0] }} <span class="tag-count">({{ tag[1] | size }})</span>
     </a>
     {% endfor %}
   </div>
 
-  <div class="space-y-12">
+  <div id="tags-content" class="space-y-12">
     {% for tag in sorted_tags %}
-    <section id="{{ tag[0] | slugify }}" class="scroll-mt-24">
-      <h2 class="text-3xl font-bold mb-6">{{ tag[0] }}</h2>
+    <section id="tag-{{ tag[0] | slugify }}" class="tag-section hidden">
       <div class="space-y-4">
         {% for post in tag[1] %}
         <div class="flex gap-4 items-baseline">
-          <span class="text-gray-500 text-sm whitespace-nowrap">{{ post.date | date: "%Y-%m-%d" }}</span>
-          <a href="{{ post.url | relative_url }}" class="text-dark-text hover:underline">
+          <span class="text-sm whitespace-nowrap" style="color: var(--text-tertiary);">{{ post.date | date: "%Y-%m-%d" }}</span>
+          <a href="{{ post.url | relative_url }}" class="hover:underline" style="color: var(--text-primary);">
             {{ post.title }}
           </a>
         </div>
@@ -35,4 +42,65 @@ permalink: /tags/
     {% endfor %}
   </div>
 </div>
+
+<script>
+  function showTag(tagSlug) {
+    // Hide all tag sections
+    const allSections = document.querySelectorAll('.tag-section');
+    allSections.forEach(section => section.classList.add('hidden'));
+
+    // Show the selected tag section
+    const selectedSection = document.getElementById('tag-' + tagSlug);
+    if (selectedSection) {
+      selectedSection.classList.remove('hidden');
+
+      // Update the title - get tag name from the link
+      const tagLink = document.querySelector(`a[href*="#${tagSlug}"]`);
+      const tagName = tagLink ? tagLink.textContent.split('(')[0].trim() : tagSlug;
+
+      document.getElementById('selected-tag-name').textContent = tagName || tagSlug;
+      document.getElementById('selected-tag-title').style.display = 'block';
+
+      // Scroll to content smoothly
+      document.getElementById('tags-content').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  function clearTagSelection() {
+    // Hide all tag sections
+    const allSections = document.querySelectorAll('.tag-section');
+    allSections.forEach(section => section.classList.add('hidden'));
+
+    // Hide the selected tag title
+    document.getElementById('selected-tag-title').style.display = 'none';
+
+    // Clear the URL hash and navigate to clean URL
+    window.location.href = window.location.pathname;
+  }
+
+  // Auto-show tag if hash is present in URL (e.g., /tags/#python)
+  window.addEventListener('DOMContentLoaded', function() {
+    if (window.location.hash) {
+      const tagSlug = window.location.hash.substring(1);
+      if (tagSlug) {
+        setTimeout(function() {
+          showTag(tagSlug);
+        }, 100);
+      }
+    }
+  });
+
+  // Listen for hash changes (when user clicks a tag link on the same page)
+  window.addEventListener('hashchange', function() {
+    if (window.location.hash) {
+      const tagSlug = window.location.hash.substring(1);
+      if (tagSlug) {
+        showTag(tagSlug);
+      }
+    } else {
+      // No hash means return to all tags view
+      clearTagSelection();
+    }
+  });
+</script>
 

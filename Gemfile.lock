@@ -168,7 +168,7 @@ DEPENDENCIES
   http_parser.rb (~> 0.6.0)
   jekyll (~> 4.4.1)
   jekyll-feed (~> 0.12)
-  jekyll-paginate-v2
+  jekyll-paginate
   jekyll-seo-tag
   jekyll-sitemap
   minima (~> 2.5)
