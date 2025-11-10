@@ -19,7 +19,13 @@ layout: default
     <aside class="toc-sidebar">
       <nav class="toc-sticky">
         <div class="toc-header"><span class="toc-emoji">🚀</span> Table of Contents</div>
-        <ol class="toc-list">
+        <ol class="toc-list" id="toc-list">
+          {% comment %}
+          Manual TOC: If page.toc is an array with items, use manual mode
+          Automatic TOC: If page.toc is true, JavaScript will generate it
+          {% endcomment %}
+          {% if page.toc[0].id %}
+          {% comment %} Manual mode - render the TOC from front matter {% endcomment %}
           {% assign section_num = 0 %}
           {% for item in page.toc %}
             {% assign section_num = section_num | plus: 1 %}
@@ -40,6 +46,9 @@ layout: default
               {% endif %}
             </li>
           {% endfor %}
+          {% else %}
+          {% comment %} Automatic mode - JavaScript will populate this {% endcomment %}
+          {% endif %}
         </ol>
       </nav>
     </aside>
@@ -95,19 +104,114 @@ layout: default
 
 <script>
 // ============================================
+// Automatic TOC Generation
+// ============================================
+(function() {
+  'use strict';
+
+  function generateSlug(text) {
+    return text
+      .toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/--+/g, '-')
+      .trim();
+  }
+
+  function generateAutoToc() {
+    const tocList = document.getElementById('toc-list');
+    if (!tocList) return false;
+
+    // Check if TOC is already populated (manual mode)
+    if (tocList.children.length > 0) return false;
+
+    // Find all h2 and h3 in article content
+    const articleContent = document.querySelector('.article-content');
+    if (!articleContent) return false;
+
+    const headings = articleContent.querySelectorAll('h2, h3');
+    if (headings.length === 0) return false;
+
+    let sectionNum = 0;
+    let currentH2 = null;
+    let currentSublist = null;
+
+    headings.forEach((heading) => {
+      const text = heading.textContent.trim();
+      let id = heading.id;
+
+      // Generate ID if it doesn't exist
+      if (!id) {
+        id = generateSlug(text);
+        heading.id = id;
+      }
+
+      if (heading.tagName === 'H2') {
+        sectionNum++;
+
+        // Create H2 list item
+        const li = document.createElement('li');
+        li.className = 'toc-item toc-h2';
+
+        const link = document.createElement('a');
+        link.href = '#' + id;
+        link.className = 'toc-link';
+        link.setAttribute('data-target', id);
+        link.innerHTML = `<span class="toc-number">${sectionNum}.</span> ${text}`;
+
+        li.appendChild(link);
+        tocList.appendChild(li);
+
+        currentH2 = li;
+        currentSublist = null;
+      } else if (heading.tagName === 'H3' && currentH2) {
+        // Create subsection list if it doesn't exist
+        if (!currentSublist) {
+          currentSublist = document.createElement('ul');
+          currentSublist.className = 'toc-sublist';
+          currentH2.appendChild(currentSublist);
+        }
+
+        // Create H3 list item
+        const li = document.createElement('li');
+        li.className = 'toc-item toc-h3';
+
+        const link = document.createElement('a');
+        link.href = '#' + id;
+        link.className = 'toc-link';
+        link.setAttribute('data-target', id);
+        link.innerHTML = `<span class="toc-bullet">•</span> ${text}`;
+
+        li.appendChild(link);
+        currentSublist.appendChild(li);
+      }
+    });
+
+    return true;
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    // Try to generate automatic TOC first
+    generateAutoToc();
+  });
+})();
+
+// ============================================
 // Table of Contents Active State with Scroll Spy
 // ============================================
 (function() {
   'use strict';
 
   document.addEventListener('DOMContentLoaded', function() {
-    const toc = document.querySelector('.toc-sticky');
-    if (!toc) return;
+    // Small delay to ensure auto-generated TOC is ready
+    setTimeout(function() {
+      const toc = document.querySelector('.toc-sticky');
+      if (!toc) return;
 
-    const tocLinks = toc.querySelectorAll('.toc-link');
-    const allHeadings = document.querySelectorAll('h2[id], h3[id]');
+      const tocLinks = toc.querySelectorAll('.toc-link');
+      const allHeadings = document.querySelectorAll('h2[id], h3[id]');
 
-    if (tocLinks.length === 0 || allHeadings.length === 0) return;
+      if (tocLinks.length === 0 || allHeadings.length === 0) return;
 
     // Create a map of heading IDs to TOC links for quick lookup
     const linkMap = new Map();
@@ -224,28 +328,29 @@ layout: default
       });
     });
 
-    // Initial update on page load
-    updateActiveToc();
+      // Initial update on page load
+      updateActiveToc();
 
-    // Handle direct navigation with hash
-    if (window.location.hash) {
-      const hash = window.location.hash.substring(1);
-      setActiveLink(hash);
+      // Handle direct navigation with hash
+      if (window.location.hash) {
+        const hash = window.location.hash.substring(1);
+        setActiveLink(hash);
 
-      // Scroll to the element after a short delay
-      setTimeout(() => {
-        const element = document.getElementById(hash);
-        if (element) {
-          const headerOffset = 100;
-          const elementPosition = element.offsetTop;
-          const offsetPosition = elementPosition - headerOffset;
-          window.scrollTo({
-            top: offsetPosition,
-            behavior: 'smooth'
-          });
-        }
-      }, 100);
-    }
+        // Scroll to the element after a short delay
+        setTimeout(() => {
+          const element = document.getElementById(hash);
+          if (element) {
+            const headerOffset = 100;
+            const elementPosition = element.offsetTop;
+            const offsetPosition = elementPosition - headerOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        }, 100);
+      }
+    }, 100); // End of setTimeout for auto-TOC compatibility
   });
 })();
 </script>

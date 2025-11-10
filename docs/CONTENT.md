@@ -39,7 +39,41 @@ Learn how to add blog posts and projects.
 
 ### Table of Contents
 
-For long posts, add TOC in front matter:
+You can add a Table of Contents to your posts in two ways:
+
+#### Option 1: Automatic TOC (Recommended)
+
+Simply set `toc: true` and the TOC will be auto-generated from your H2 and H3 headings:
+
+```yaml
+---
+layout: post
+title: "My Post"
+toc: true
+---
+
+## Introduction
+
+Your content here...
+
+## Main Section
+
+More content...
+
+### Subsection One
+
+Subsection content...
+```
+
+**Features:**
+- Automatically extracts all H2 and H3 headings
+- Auto-generates IDs if headings don't have them
+- No manual maintenance needed
+- Perfect for most posts
+
+#### Option 2: Manual TOC
+
+For complete control over TOC structure and custom IDs:
 
 ```yaml
 ---
@@ -65,6 +99,11 @@ Content...
 
 Content...
 ```
+
+**Use manual mode when:**
+- You want custom TOC titles different from headings
+- You need specific section ordering
+- You want to exclude certain headings from TOC
 
 ### Markdown Basics
 
