@@ -1,0 +1,44 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# Dependencies
+node_modules
+vendor/bundle
+
+# Build outputs
+_site
+.sass-cache
+.jekyll-cache
+.jekyll-metadata
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Documentation
+docs/
+README.md
+CONTRIBUTING.md
+LICENSE
+
+# CI/CD
+.github
+.gitlab-ci.yml
+

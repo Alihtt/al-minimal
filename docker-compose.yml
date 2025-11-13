@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  jekyll:
+    build: .
+    container_name: jekyll-blog
+    ports:
+      - "4000:4000"  # Jekyll server
+      - "35729:35729"  # LiveReload
+    volumes:
+      # Mount source code for live development
+      - .:/site
+      # Prevent overwriting node_modules and vendor
+      - /site/node_modules
+      - /site/vendor
+      - /site/.bundle
+    environment:
+      - JEKYLL_ENV=development
+    command: bash -c "npm run build:css && bundle exec jekyll serve --host 0.0.0.0 --livereload --force_polling"
+    stdin_open: true
+    tty: true
+
+  # Separate service for CSS watching (optional - use if you want auto-rebuild of CSS)
+  tailwind:
+    build: .
+    container_name: jekyll-tailwind
+    volumes:
+      - .:/site
+      - /site/node_modules
+    working_dir: /site
+    command: npm run watch:css
+    profiles:
+      - dev  # Only runs when explicitly activated with --profile dev
+
