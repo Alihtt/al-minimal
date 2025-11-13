@@ -363,7 +363,7 @@ Powered by these amazing tools:
 - **[Jekyll](https://jekyllrb.com/)** - Static site generator
 - **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
 - **[Font Awesome](https://fontawesome.com/)** - Icons
-- **[jekyll-paginate](https://github.com/sverrirs/jekyll-paginate)** - Pagination
+- **[jekyll-paginate](https://github.com/jekyll/jekyll-paginate)** - Pagination
 - **[GitHub Pages](https://pages.github.com/)** - Free hosting
 - **[Docker](https://www.docker.com/)** - Containerization platform
 
